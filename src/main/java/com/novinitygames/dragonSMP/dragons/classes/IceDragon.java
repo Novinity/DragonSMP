@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.util.HashMap;
+
 public class IceDragon extends Dragon {
     static int id;
 
@@ -19,7 +21,7 @@ public class IceDragon extends Dragon {
 
     @Override
     public void Uninit() {
-
+        this.dragonUser.player.setWalkSpeed(0.2f);
     }
 
     @Override
@@ -39,16 +41,36 @@ public class IceDragon extends Dragon {
         world.playSound(player.getLocation(), Sound.ITEM_FIRECHARGE_USE, 0.5f, 1.0f);
 
         final int[] l = {0};
+        HashMap<Location, Material> changedBlocks = new HashMap<>();
         id = Bukkit.getScheduler().runTaskTimer(DragonSMP.getInstance(), new Runnable() {
             @Override
             public void run() {
                 Location center = player.getLocation();
-//                center.setPitch(0);
-//                center = center.add(center.getDirection().normalize().multiply(1.5));
                 center.setY(player.getLocation().getY() - 1);
-                createFilledCircle(center, 2, Material.ICE);
+
+                World world = center.getWorld();
+                if (world == null) return;
+
+                int cx = center.getBlockX();
+                int cy = center.getBlockY();
+                int cz = center.getBlockZ();
+
+                for (int x = -2; x <= 2; x++) {
+                    for (int z = -2; z <= 2; z++) {
+                        if (world.getBlockAt(cx + x, cy, cz + z).getType() != Material.AIR && world.getBlockAt(cx + x, cy, cz + z).getType() != Material.ICE) {
+                            changedBlocks.put(world.getBlockAt(cx + x, cy, cz + z).getLocation(), world.getBlockAt(cx + x, cy, cz + z).getType());
+                            world.getBlockAt(cx + x, cy, cz + z).setType(Material.ICE);
+                        }
+                    }
+                }
+
                 l[0]++;
-                if (l[0] >= 7*20) Bukkit.getScheduler().cancelTask(id);
+                if (l[0] >= 7*20) {
+                    for (Location loc : changedBlocks.keySet()) {
+                        loc.getBlock().setType(changedBlocks.get(loc));
+                    }
+                    Bukkit.getScheduler().cancelTask(id);
+                }
             }
         }, 0L, 1L).getTaskId();
 
@@ -86,23 +108,5 @@ public class IceDragon extends Dragon {
     @Override
     public String getId() {
         return "ice";
-    }
-
-    public void createFilledCircle(Location center, int radius, Material material) {
-        World world = center.getWorld();
-        if (world == null) return;
-
-        int cx = center.getBlockX();
-        int cy = center.getBlockY();
-        int cz = center.getBlockZ();
-//        int radiusSquared = radius * radius;
-
-        for (int x = -radius; x <= radius; x++) {
-            for (int z = -radius; z <= radius; z++) {
-                if (world.getBlockAt(cx, cy, cz).getType() != Material.AIR && world.getBlockAt(cx, cy, cz).getType() != material) {
-                    world.getBlockAt(cx + x, cy, cz + z).setType(material);
-                }
-            }
-        }
     }
 }

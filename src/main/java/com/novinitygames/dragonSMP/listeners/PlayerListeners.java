@@ -24,7 +24,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.*;
 
+import java.util.ArrayList;
+
 public class PlayerListeners implements Listener {
+    ArrayList<Player> fb = new ArrayList<>();
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -51,10 +55,10 @@ public class PlayerListeners implements Listener {
 
     @EventHandler
     public void onPlayerDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Player) {
-            if (event.getDamager() instanceof Fireball fireball && fireball.hasMetadata("ability")) {
-                event.setDamage(6.0);
-            }
+        if (event.getEntity() instanceof Player p && fb.contains(p)) {
+            event.setDamage(0);
+            p.setHealth(p.getHealth() - 6.0);
+            fb.remove(p);
         }
     }
 
@@ -65,6 +69,7 @@ public class PlayerListeners implements Listener {
         if (!fireball.hasMetadata("ability")) return;
 
         if (event.getHitEntity() instanceof Player player) {
+            fb.add(player);
             player.damage(6.0, fireball.getShooter() instanceof Entity e ? e : null);
         }
     }
@@ -77,7 +82,7 @@ public class PlayerListeners implements Listener {
                 DragonSMP.getInstance().dragonUsers.get(player).dragon.getClass() == IceDragon.class) {
             Location loc = player.getWorld().getHighestBlockAt(player.getLocation()).getLocation();
             if ((loc.getBlock().getType() == Material.ICE || loc.getBlock().getType() == Material.PACKED_ICE || loc.getBlock().getType() == Material.BLUE_ICE)) {
-                player.setWalkSpeed(0.5f);
+                player.setWalkSpeed(0.4f);
             } else {
                 player.setWalkSpeed(0.2f);
             }

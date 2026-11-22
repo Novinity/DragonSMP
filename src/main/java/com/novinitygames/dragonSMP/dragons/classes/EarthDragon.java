@@ -120,7 +120,7 @@ public class EarthDragon extends Dragon {
                         }
                     }
                 }
-            }, y*1L);
+            }, y);
         }
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(DragonSMP.getInstance(), new Runnable() {
@@ -140,7 +140,7 @@ public class EarthDragon extends Dragon {
                     }
                 }
             }
-        }, (height+1)*5L);
+        }, height+1);
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(DragonSMP.getInstance(), new Runnable() {
             @Override
