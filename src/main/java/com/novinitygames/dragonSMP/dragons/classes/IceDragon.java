@@ -10,6 +10,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class IceDragon extends Dragon {
+    static int id;
+
     public void Init(DragonUser dragonUser) {
         this.dragonUser = dragonUser;
         ability1Cooldown = 150;
@@ -35,6 +37,20 @@ public class IceDragon extends Dragon {
 
         DragonUser target = null;
         world.playSound(player.getLocation(), Sound.ITEM_FIRECHARGE_USE, 0.5f, 1.0f);
+
+        final int[] l = {0};
+        id = Bukkit.getScheduler().runTaskTimer(DragonSMP.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                Location center = player.getLocation();
+//                center.setPitch(0);
+//                center = center.add(center.getDirection().normalize().multiply(1.5));
+                center.setY(player.getLocation().getY() - 1);
+                createFilledCircle(center, 2, Material.ICE);
+                l[0]++;
+                if (l[0] >= 7*20) Bukkit.getScheduler().cancelTask(id);
+            }
+        }, 0L, 1L).getTaskId();
 
         int range = 4;
         for (int i = 0; i <= range; i++) {
@@ -70,5 +86,23 @@ public class IceDragon extends Dragon {
     @Override
     public String getId() {
         return "ice";
+    }
+
+    public void createFilledCircle(Location center, int radius, Material material) {
+        World world = center.getWorld();
+        if (world == null) return;
+
+        int cx = center.getBlockX();
+        int cy = center.getBlockY();
+        int cz = center.getBlockZ();
+//        int radiusSquared = radius * radius;
+
+        for (int x = -radius; x <= radius; x++) {
+            for (int z = -radius; z <= radius; z++) {
+                if (world.getBlockAt(cx, cy, cz).getType() != Material.AIR && world.getBlockAt(cx, cy, cz).getType() != material) {
+                    world.getBlockAt(cx + x, cy, cz + z).setType(material);
+                }
+            }
+        }
     }
 }

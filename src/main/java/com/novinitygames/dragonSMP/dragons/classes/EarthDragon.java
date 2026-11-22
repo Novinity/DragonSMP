@@ -85,6 +85,21 @@ public class EarthDragon extends Dragon {
         int height = 4;
         HashMap<Location, Material> changedBlocks = new HashMap<>();
         ArrayList<Location> placedBlocks = new ArrayList<>();
+
+        for (int x = -range; x <= range; x++) {
+            for (int z = -range; z <= range; z++) {
+                if (x == -range || z == -range || x == range || z == range) continue;
+                Location targetLoc =  initialLocation.clone().add(x, -1, z);
+                if (!targetLoc.getBlock().getType().equals(Material.AIR)) {
+                    changedBlocks.put(targetLoc, targetLoc.getBlock().getType());
+                }
+                placedBlocks.add(targetLoc);
+                unbreakableBlocks.add(targetLoc);
+                targetLoc.getBlock().setType(Material.STONE);
+                world.playSound(targetLoc, Sound.BLOCK_STONE_PLACE, 1f, 1.0f);
+            }
+        }
+
         for (int y = 0; y <= height; y++) {
             int finalY = y;
             Bukkit.getScheduler().scheduleSyncDelayedTask(DragonSMP.getInstance(), new Runnable() {
@@ -105,7 +120,7 @@ public class EarthDragon extends Dragon {
                         }
                     }
                 }
-            }, y*10L);
+            }, y*1L);
         }
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(DragonSMP.getInstance(), new Runnable() {
@@ -125,7 +140,7 @@ public class EarthDragon extends Dragon {
                     }
                 }
             }
-        }, (height+1)*10L);
+        }, (height+1)*5L);
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(DragonSMP.getInstance(), new Runnable() {
             @Override

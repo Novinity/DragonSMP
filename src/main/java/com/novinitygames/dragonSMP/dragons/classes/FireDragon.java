@@ -6,6 +6,7 @@ import com.novinitygames.dragonSMP.dragons.DragonUser;
 import org.bukkit.*;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -45,8 +46,7 @@ public class FireDragon extends Dragon {
         World world = player.getWorld();
 
         Fireball fireball = player.launchProjectile(Fireball.class, initialLocation.getDirection());
-        fireball.setCustomName(ChatColor.RED + "AbilityFireball");
-        fireball.setCustomNameVisible(false);
+        fireball.setMetadata("ability", new FixedMetadataValue(DragonSMP.getInstance(), true));
 
         world.playSound(player.getLocation(), Sound.ITEM_FIRECHARGE_USE, 1, 1);
     }

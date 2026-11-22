@@ -11,7 +11,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.damage.DamageType;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,6 +21,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.*;
 
 public class PlayerListeners implements Listener {
@@ -48,12 +51,21 @@ public class PlayerListeners implements Listener {
 
     @EventHandler
     public void onPlayerDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            if (event.getDamager().getType() == EntityType.FIREBALL && event.getDamager().getCustomName().equalsIgnoreCase(ChatColor.RED + "AbilityFireball")) {
-                event.setCancelled(true);
-                player.damage(6);
-                player.setVelocity(player.getVelocity().add(event.getEntity().getVelocity().multiply(3)));
+        if (event.getEntity() instanceof Player) {
+            if (event.getDamager() instanceof Fireball fireball && fireball.hasMetadata("ability")) {
+                event.setDamage(6.0);
             }
+        }
+    }
+
+    @EventHandler
+    public void onProjectileHit(ProjectileHitEvent event) {
+        if (!(event.getEntity() instanceof Fireball fireball)) return;
+
+        if (!fireball.hasMetadata("ability")) return;
+
+        if (event.getHitEntity() instanceof Player player) {
+            player.damage(6.0, fireball.getShooter() instanceof Entity e ? e : null);
         }
     }
 

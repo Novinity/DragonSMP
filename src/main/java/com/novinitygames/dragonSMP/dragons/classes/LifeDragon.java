@@ -51,7 +51,7 @@ public class LifeDragon extends Dragon {
                         target = dragonUser1;
 
                         Random rand = new Random();
-                        t.setMaxHealth(t.getMaxHealth() - (rand.nextInt(3, 6) * 2));
+                        t.setMaxHealth(t.getMaxHealth() - 6);
                         t.damage(1);
 
                         foundTarget = true;
