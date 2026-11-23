@@ -31,7 +31,7 @@ public class WindDragon extends Dragon {
         Location initialLocation = player.getLocation();
         World world = player.getWorld();
 
-        dragonUser.player.setVelocity(dragonUser.player.getVelocity().add(new Vector(0, 3.5, 0)));
+        dragonUser.player.setVelocity(dragonUser.player.getVelocity().add(new Vector(0, 2.75f, 0)));
 
         world.playSound(player.getLocation(), Sound.ENTITY_BREEZE_WIND_BURST, 1.0f, 1.0f);
         world.playSound(player.getLocation(), Sound.ITEM_TRIDENT_RIPTIDE_1, 1.0f, 1.0f);

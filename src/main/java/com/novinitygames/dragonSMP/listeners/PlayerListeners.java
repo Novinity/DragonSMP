@@ -11,10 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.damage.DamageType;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -27,7 +24,7 @@ import org.bukkit.event.player.*;
 import java.util.ArrayList;
 
 public class PlayerListeners implements Listener {
-    ArrayList<Player> fb = new ArrayList<>();
+    ArrayList<LivingEntity> fb = new ArrayList<>();
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -68,9 +65,9 @@ public class PlayerListeners implements Listener {
 
         if (!fireball.hasMetadata("ability")) return;
 
-        if (event.getHitEntity() instanceof Player player) {
-            fb.add(player);
-            player.damage(6.0, fireball.getShooter() instanceof Entity e ? e : null);
+        if (event.getHitEntity() instanceof LivingEntity e) {
+            fb.add(e);
+            e.damage(6.0, fireball.getShooter() instanceof Entity er ? er : null);
         }
     }
 
